@@ -185,6 +185,11 @@ resource "aws_instance" "web" {
   key_name                    = "${aws_key_pair.reasinatra.key_name}"
   ipv6_address_count          = 1
 
+  root_block_device {
+    volume_type = "gp2"
+    volume_size = "5"
+  }
+
   tags {
     "Name" = "reasinatra-web"
   }
