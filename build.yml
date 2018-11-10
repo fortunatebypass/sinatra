@@ -1,0 +1,54 @@
+---
+- name: sinatra build
+  become: true
+  hosts: all
+  tasks:
+    - name: checkout latest simple-sinatra-app
+      git:
+        repo: 'https://github.com/rea-cruitment/simple-sinatra-app.git'
+        dest: /var/simple-sinatra-app
+    - name: set up app Dockerfile
+      copy:
+        src: "app/Dockerfile"
+        dest: "/var/simple-sinatra-app/Dockerfile"
+    - name: build app into container
+      command: docker build -t simple-sinatra-app /var/simple-sinatra-app
+    - name: create docker network
+      command: docker network create sinatra
+      args:
+        creates: /var/docker-network-sinatra
+    - name: create docker network lock
+      command: touch /var/docker-network-sinatra
+      args:
+        creates: /var/docker-network-sinatra
+    - name: set up app systemd unit
+      copy:
+        src: "app/sinatra@.service"
+        dest: "/etc/systemd/system/sinatra@.service"
+    - name: start app1
+      systemd:
+        name: sinatra@1
+        enabled: yes
+        state: restarted
+        daemon-reload: yes
+    - name: start app2
+      systemd:
+        name: sinatra@2
+        enabled: yes
+        state: restarted
+        daemon-reload: yes
+    - name: set up load balancer config
+      copy:
+        src: "lb/nginx.conf"
+        dest: "/var/nginx.conf"
+    - name: set up lb systemd unit
+      copy:
+        src: "lb/lb.service"
+        dest: "/etc/systemd/system/lb.service"
+    - name: start load balancer
+      systemd:
+        name: lb
+        enabled: yes
+        state: restarted
+        daemon-reload: yes
+

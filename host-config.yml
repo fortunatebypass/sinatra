@@ -1,0 +1,21 @@
+---
+- name: sinatra host configuration
+  become: true
+  hosts: all
+  tasks:
+    - debug: msg="Host is {{ ansible_fqdn }}"
+    - name: start and enable docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+    - name: configure sshd
+      copy:
+        src: "sshd_config"
+        dest: "/etc/ssh/sshd_config"
+    - name: restart sshd if required
+      systemd:
+        name: sshd
+        enabled: yes
+        state: reloaded
+        daemon-reload: yes

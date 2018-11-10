@@ -2,3 +2,5 @@
 *.tfstate
 *.tfstate.*
 *.tfplan
+ansible.inventory
+*.retry
