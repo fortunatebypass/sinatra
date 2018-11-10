@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "ap-southeast-2"
+  region = "${var.aws_region}"
 }
 
 variable "ssh_from_public_ip_cidr" {
@@ -12,6 +12,10 @@ variable "vpc_cidr" {
 
 variable "ssh_public_key" {
   description = "SSH Public Key for initial EC2 SSH access - E.g.: 'ssh-rsa XXXXX user@host'"
+}
+
+variable "aws_region" {
+  description = "AWS region to deploy into - E.g.: ap-southeast-2"
 }
 
 data "aws_availability_zones" "available" {}
