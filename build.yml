@@ -18,9 +18,9 @@
       args:
         creates: /var/docker-network-sinatra
     - name: create docker network lock
-      command: touch /var/docker-network-sinatra
-      args:
-        creates: /var/docker-network-sinatra
+      file:
+        path: /var/docker-network-sinatra
+        state: touch
     - name: set up app systemd unit
       copy:
         src: "app/sinatra@.service"
