@@ -10,15 +10,15 @@ Deploy a simple sinatra app in a secure environment on port 80 using config/infr
 
 * Hashicorp's Terraform - https://www.terraform.io/downloads.html (tested with 0.11.10)
 * Ansible (2.5.0 or above)
-* AWS Account (with keys in ENV vars or ~/.aws/credentials), with the ability to create public VPCs and EC2 instances
-* SSH keys to be used for accessing the infrastructure at ~/.ssh/id_rsa and ~/.ssh/id_rsa.pub
+* AWS Account (with keys in ENV vars or `~/.aws/credentials`), with the ability to create public VPCs and EC2 instances
+* SSH keys to be used for accessing the infrastructure at `~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub`
 
 ## Just deploy it already (TL;DR)
 
 We recommend reading the rest of this guide first.
 But for those who which to jump straight in the lake without looking:
 
-1. Clone this repo and cd into this directory
+1. Clone this repo and `cd` into this directory
 2. Build the Infrastructure and Host OS (will take a few minutes)
 ```
 ./build-infra.sh
@@ -33,7 +33,7 @@ But for those who which to jump straight in the lake without looking:
 ./destroy.sh
 ```
 
-## Design
+## Infrastructure Design
 
 ### General Assumptions
 
@@ -43,6 +43,7 @@ There have been many assumptions made as part of this design, including:
 * This is only app that will ever be deployed in this specfic AWS VPC
 * The app should be built and run exactly as prescribed (E.g.: no switching to unicorn etc.)
 * Keep costs low despite use of AWS (potentially using free-tier)
+* Someone will have to be able to deploy app updates on an on-going basis
 
 ### Overview
 
@@ -93,7 +94,7 @@ The host operating system is [Intel's Clear Linux](https://clearlinux.org).
 
 **Why?**
 
-* No other OS's having to be supported being used (see General Assumptions)
+* No other OS's having to be supported currently (see General Assumptions)
 * Keeps ongoing maintenance to a minimum
 * Super fast performance
 * Excellent baseline [security](https://clearlinux.org/documentation/clear-linux/concepts/security) with:
@@ -113,3 +114,26 @@ No.
 * Not as well supported on various infrastructure (e.g.: no AWS EC2 t3 and m5a type instances)
 * You like spending lots of time and effort securing down every last package and their distro defaults
 
+#### Docker
+
+Technically, using docker and containers isn't really required. We've chosen to use docker containers since it is assumed that there will be future app updates, and the container portability will make app development/deployment/CI/CD significantly easier.
+
+The other option on this OS would be [Kata Containers](https://katacontainers.io/) for extra security, but is not implemented here.
+
+Each container is wrapped in a SystemD service with specified dependencies. This is to simply this demo, but also works in production for _small_ applications. It also allows for logs to be in journald for easy access and rotation and to be managed like any other service.
+
+A larger install would preferably use service discovery (like [Consul](https://www.consul.io)) instead of hardcoded references as well as a multiple instance orchestrator like Kubernetes (available on Clear Linux), Nomad or Unit.
+
+#### Load balancer
+
+Nginx using the latest [public docker image](https://hub.docker.com/_/nginx/).
+
+Configured for security and performance, but without HTTPS of any kind (*DO NOT DO THIS IN PRODUCTION - EVER!*).
+
+The example sinatra app has no variablilty and so would be a perfect candidate for implementing caching at the nginx level. We've assumed that this won't always be the case and have not included a cache at this time.
+
+#### App servers
+
+Dual app servers allowing for higher availability and easier maintenance without downtime.
+
+Built using a recent version of the public core [ruby docker image](https://hub.docker.com/_/ruby/). Alpine edition for minial size and faster deployment.
