@@ -16,21 +16,6 @@ variable "ssh_public_key" {
 
 data "aws_availability_zones" "available" {}
 
-data "aws_ami" "ubuntu_bionic_minimal" {
-  most_recent = true
-
-  # Owner: Ubuntu
-  owners = ["099720109477"]
-
-  filter {
-    name = "name"
-
-    values = [
-      "ubuntu-minimal/images/hvm-ssd/ubuntu-bionic-18.04-amd64-minimal-*",
-    ]
-  }
-}
-
 data "aws_ami" "intel_clear_linux" {
   most_recent = true
 
