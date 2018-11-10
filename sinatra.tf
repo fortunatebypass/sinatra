@@ -46,8 +46,8 @@ data "aws_ami" "intel_clear_linux" {
   }
 }
 
-resource "aws_key_pair" "reasinatra" {
-  key_name   = "reasinatra_key"
+resource "aws_key_pair" "sinatra" {
+  key_name   = "sinatra_key"
   public_key = "${var.ssh_public_key}"
 }
 
@@ -56,15 +56,15 @@ resource "aws_vpc" "vpc_name" {
   assign_generated_ipv6_cidr_block = true
 
   tags {
-    Name = "reasinatra_vpc"
+    Name = "sinatra_vpc"
   }
 }
 
-resource "aws_internet_gateway" "reasinatra_ig" {
+resource "aws_internet_gateway" "sinatra_ig" {
   vpc_id = "${aws_vpc.vpc_name.id}"
 
   tags {
-    Name = "reasinatra_ig"
+    Name = "sinatra_ig"
   }
 }
 
@@ -85,12 +85,12 @@ resource "aws_route_table" "vpc_sn_rt" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.reasinatra_ig.id}"
+    gateway_id = "${aws_internet_gateway.sinatra_ig.id}"
   }
 
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id      = "${aws_internet_gateway.reasinatra_ig.id}"
+    gateway_id      = "${aws_internet_gateway.sinatra_ig.id}"
   }
 
   tags {
@@ -182,7 +182,7 @@ resource "aws_instance" "web" {
   subnet_id                   = "${aws_subnet.vpc_sn.id}"
   security_groups             = ["${aws_security_group.public_sg.id}"]
   associate_public_ip_address = true
-  key_name                    = "${aws_key_pair.reasinatra.key_name}"
+  key_name                    = "${aws_key_pair.sinatra.key_name}"
   ipv6_address_count          = 1
 
   root_block_device {
@@ -191,7 +191,7 @@ resource "aws_instance" "web" {
   }
 
   tags {
-    "Name" = "reasinatra-web"
+    "Name" = "sinatra-web"
   }
 }
 
