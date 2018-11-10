@@ -45,5 +45,6 @@ echo "waiting on reboot to finish";
 sleep 30;
 
 # Apply host configuration changes for application and security
+export ANSIBLE_HOST_KEY_CHECKING=False;
 ansible-playbook -i "$(pwd)/ansible.inventory" --private-key="$HOME/.ssh/id_rsa" --extra-vars "host=all" "$(pwd)/host-config.yml";
 echo "instance: $instance";
