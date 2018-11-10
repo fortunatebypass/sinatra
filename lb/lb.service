@@ -1,0 +1,15 @@
+/etc/systemd/system/lb.service:
+[Unit]
+Description=Load Balancer for Sinatra
+Requires=docker.service sinatra@.service
+After=docker.service sinatra@.service
+
+[Service]
+Restart=always
+
+ExecStartPre=/usr/bin/docker network create sinatra 2>/dev/null || /bin/true;
+ExecStartPre=/usr/bin/docker run --rm --name lb --net sinatra -v /home/clear/simple-sinatra-app/nginx.lb.conf:/etc/nginx/nginx.conf -p 80:80 nginx nginx -t;
+ExecStart=/usr/bin/docker run --rm --name lb --net sinatra -v /home/clear/simple-sinatra-app/nginx.lb.conf:/etc/nginx/nginx.conf -p 80:80 nginx;
+
+[Install]
+WantedBy=multi-user.target

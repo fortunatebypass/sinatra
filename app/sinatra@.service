@@ -1,0 +1,13 @@
+[Unit]
+Description=Simple Sinatra App %i
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+
+ExecStartPre=/usr/bin/docker network create sinatra 2>/dev/null || /bin/true;
+ExecStart=/usr/bin/docker run --rm --name app%i --net sinatra simple-sinatra-app;
+
+[Install]
+WantedBy=multi-user.target
