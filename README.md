@@ -187,7 +187,7 @@ Preferably the Build process for the App would be handled in CI/CD and then stor
 
 For simplification in this demo, we've merged the Build and Deploy processes to have the container build happen on the Host OS instead.
 
-The script uses ansible to complete the App build then deploy via SystemD services automatically. You should trigger this script (which is idempotent) for each app or container change.
+The script uses Ansible to complete the App build then deploy via SystemD services automatically. You should trigger this script (which is idempotent) for each app or container change.
 
 Build and Deploy:
 ```
