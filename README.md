@@ -92,7 +92,7 @@ In a production environment, there would likely need to be multiple instances to
 
 The host operating system is [Intel's Clear Linux](https://clearlinux.org).
 
-**Why?**
+*Why?*
 
 * No other OS's having to be supported currently (see General Assumptions)
 * Keeps ongoing maintenance to a minimum
@@ -106,7 +106,7 @@ The host operating system is [Intel's Clear Linux](https://clearlinux.org).
 * Simple and fast updates with deltas (including auto update if required)
 * Backed by Intel
 
-**Is this right for everyone?**
+*Is this right for everyone?*
 
 No.
 
@@ -114,7 +114,7 @@ No.
 * Not as well supported on various infrastructure (e.g.: no AWS EC2 t3 and m5a type instances)
 * You like spending lots of time and effort securing down every last package and their distro defaults
 
-**Security**
+*Security*
 
 As above, the default security setup on Clear Linux is excellent. Minor modification has been made to the SSH config to restrict root logins and password based auth (despite no user on the system having any password by default).
 
@@ -126,7 +126,7 @@ Many other items that you would normally configure in a mainstream linux distro 
 The firewall on the server has not been configured due to duplication with the security group which is already restricting access on all public and private networks. This should be configured in production environment.
 
 
-**Software Bundles**
+*Software Bundles*
 
 The following bundles are installed on top of the default AWS image
 
