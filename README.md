@@ -6,6 +6,17 @@ Deploy a simple sinatra app in a secure environment on port 80 using config/infr
 
 **Warning:** this is not for production and is a guide only. Here be dragons.
 
+## Contents
+
+* [Requirements](#requirements)
+* [Just deploy it already (TL;DR)](#just-deploy-it-already-tldr)
+* [Infrastructure Design](#infrastructure-design)
+  * [General Assumptions](#general-assumptions)
+  * [Design](#design)
+* [Deployment](#deployment)
+  * [Host OS](#host-os)
+  * [App Build and Deploy](#app-build-and-deploy)
+
 ## Requirements
 
 * Hashicorp's Terraform - https://www.terraform.io/downloads.html (tested with 0.11.10)
@@ -45,7 +56,7 @@ There have been many assumptions made as part of this design, including:
 * Keep costs low despite use of AWS (potentially using free-tier)
 * Someone will have to be able to deploy app updates on an on-going basis
 
-### Overview
+### Design
 
 ```
 AWS VPC
