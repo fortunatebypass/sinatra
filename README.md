@@ -114,6 +114,18 @@ No.
 * Not as well supported on various infrastructure (e.g.: no AWS EC2 t3 and m5a type instances)
 * You like spending lots of time and effort securing down every last package and their distro defaults
 
+**Security**
+
+As above, the default security setup on Clear Linux is excellent. Minor modification has been made to the SSH config to restrict root logins and password based auth (despite no user on the system having any password by default).
+
+Many other items that you would normally configure in a mainstream linux distro are pre-configured, including:
+* NTP time sync (UTC)
+* Fail2ban equivalent (Tallow)
+* Removal of unneeded software to reduce attack surface (including even cli tools like vi/vim)
+
+The firewall on the server has not been configured due to duplication with the security group which is already restricting access on all public and private networks. This should be configured in production environment.
+
+
 #### Docker
 
 Technically, using docker and containers isn't really required. We've chosen to use docker containers since it is assumed that there will be future app updates, and the container portability will make app development/deployment/CI/CD significantly easier.
@@ -128,7 +140,7 @@ A larger install would preferably use service discovery (like [Consul](https://w
 
 Nginx using the latest [public docker image](https://hub.docker.com/_/nginx/).
 
-Configured for security and performance, but without HTTPS of any kind (*DO NOT DO THIS IN PRODUCTION - EVER!*).
+Configured for security and performance, but without HTTPS/TLS of any kind (*DO NOT DO THIS IN PRODUCTION - EVER!*).
 
 The example sinatra app has no variablilty and so would be a perfect candidate for implementing caching at the nginx level. We've assumed that this won't always be the case and have not included a cache at this time.
 
@@ -137,3 +149,38 @@ The example sinatra app has no variablilty and so would be a perfect candidate f
 Dual app servers allowing for higher availability and easier maintenance without downtime.
 
 Built using a recent version of the public core [ruby docker image](https://hub.docker.com/_/ruby/). Alpine edition for minial size and faster deployment.
+
+## Deployment
+
+The deployment of the Infrastructure, Host OS configuration and App are all scripted using Bash, Terraform and Ansible. All of these scripts are automatable using CI/CD systems like Jenkins or ConcourseCI.
+
+### Host OS
+
+An ideal deployment process would have the infrastructure deployed immutably. E.g.: Packer to build the AMI pre-configured.
+
+We've compromised in this scenario for simplification, and deployed with the default Clear Linux AMI, and post-configured using a minimal amount of Ansible. This lead to the requirement for Python to be installed in the Host OS, which is not otherwise required. Other tools like Puppet do not currently support Clear Linux.
+
+The infra and host build process can be
+
+Build:
+```
+./build-infra.sh
+```
+
+Destroy:
+```
+./destroy.sh
+```
+
+### App Build and Deploy
+
+Preferably the Build process for the App would be handled in CI/CD and then stored in a container or artifact registry. A container vulnerability scanner like [Clair](https://github.com/coreos/clair) should also be implemented.
+
+For simplification in this demo, we've merged the Build and Deploy processes to have the container build happen on the Host OS instead.
+
+The script uses ansible to complete the App build then deploy via SystemD services automatically. You should trigger this script (which is idempotent) for each app or container change.
+
+Build and Deploy:
+```
+./build-app-and-deploy.sh
+```
