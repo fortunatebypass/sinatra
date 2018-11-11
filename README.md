@@ -126,6 +126,15 @@ Many other items that you would normally configure in a mainstream linux distro 
 The firewall on the server has not been configured due to duplication with the security group which is already restricting access on all public and private networks. This should be configured in production environment.
 
 
+**Software Bundles**
+
+The following bundles are installed on top of the default AWS image
+
+* git
+* containers-basic (Docker)
+* python3-basic (for Ansible)
+* cryptography (until https://github.com/clearlinux/distribution/issues/272 is fixed upstream)
+
 #### Docker
 
 Technically, using docker and containers isn't really required. We've chosen to use docker containers since it is assumed that there will be future app updates, and the container portability will make app development/deployment/CI/CD significantly easier.

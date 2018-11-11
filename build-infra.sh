@@ -38,7 +38,7 @@ echo -e "[all]\\nweb ansible_host=$instance ansible_user=clear" > ansible.invent
 sleep 60;
 
 # Add packages and reboot
-ssh clear@"$instance" "sudo swupd bundle-add git curl containers-basic python3-basic cryptography";
+ssh clear@"$instance" "sudo swupd bundle-add git containers-basic python3-basic cryptography";
 ssh clear@"$instance" "sudo reboot";
 
 echo "waiting on reboot to finish";
