@@ -34,7 +34,7 @@ terraform apply sinatra.tfplan;
 instance="$(terraform output instance_ip)";
 echo -e "[all]\\nweb ansible_host=$instance ansible_user=clear" > ansible.inventory;
 
-echo "waiting for auto updates to complete"
+echo "waiting for auto updates to complete";
 sleep 60;
 
 # Add packages and reboot
